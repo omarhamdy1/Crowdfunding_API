@@ -1,3 +1,13 @@
+<!-- Python 3 --><a href="https://www.python.org/downloads/release/python-31010/"><img src="./images/python_3.svg"></a>
+<!-- Django --><a href="https://docs.djangoproject.com/en/5.1/releases/5.0/"><img src="./images/django.svg"></a>
+<!-- DRF --><a href="https://www.django-rest-framework.org/"><img src="./images/django.svg"></a>
+<!-- PostgreSQL --><a href="https://www.postgresql.org/docs/"><img src="./images/postgresql.svg"></a>
+<!-- Redis --><a href="https://redis.io/documentation"><img src="./images/redis.svg"></a>
+<!-- Celery --><a href="https://docs.celeryproject.org/en/stable/"><img src="./images/celery.svg"></a>
+<!-- Docker --><a href="https://docs.docker.com/"><img src="./images/docker.svg"></a>
+<!-- Nginx --><a href="https://nginx.org/en/docs/"><img src="./images/nginx.svg"></a>
+
+
 <div align="center">
   <a href="https://github.com/meteopavel/Crowdfunding_API">
     <img src="./images/logo.svg" alt="Logo" width="250" height="auto">
