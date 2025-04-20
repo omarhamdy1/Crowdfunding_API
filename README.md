@@ -2,14 +2,11 @@
 <!-- Django --><a href="https://docs.djangoproject.com/en/5.1/releases/5.0/"><img src="./images/django.svg"></a>
 <!-- DRF --><a href="https://www.django-rest-framework.org/"><img src="./images/django.svg"></a>
 <!-- PostgreSQL --><a href="https://www.postgresql.org/docs/"><img src="./images/postgresql.svg"></a>
-
-
-
+<br /><br />
 <!-- Redis --><a href="https://redis.io/documentation"><img src="./images/redis.svg"></a>
 <!-- Celery --><a href="https://docs.celeryproject.org/en/stable/"><img src="./images/celery.svg"></a>
 <!-- Pillow --><a href="https://pillow.readthedocs.io/en/stable/releasenotes/10.3.0.html"><img src="./images/pillow.svg"></a>
-
-
+<br /><br />
 <!-- Docker --><a href="https://docs.docker.com/"><img src="./images/docker.svg"></a>
 <!-- Uvicorn --><a href="https://www.uvicorn.org/release-notes/"><img src="./images/uvicorn.svg"></a>
 <!-- Nginx --><a href="https://nginx.org/en/docs/"><img src="./images/nginx.svg"></a>
