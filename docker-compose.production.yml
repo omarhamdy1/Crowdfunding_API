@@ -38,7 +38,7 @@ services:
     depends_on:
       - redis
   gateway:
-    image: meteopavel/crowdfunding_api-celery
+    image: meteopavel/crowdfunding_api-gateway
     restart: unless-stopped
     env_file: .env 
     ports:
