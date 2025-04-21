@@ -7,13 +7,18 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-
-from .tasks import send_email
 
 from .models import Collect, Payment
 from .serializers import (
     CollectSerializer, PaymentSerializer, RegisterSerializer
+)
+from .services import (
+    send_welcome_email, send_collect_creation_email, send_donation_email
+)
+from .swagger_schemas import (
+    register_swagger_schema,
+    collect_create_swagger_schema,
+    payment_create_swagger_schema
 )
 
 
@@ -23,62 +28,26 @@ class RegisterViewSet(CreateModelMixin, viewsets.GenericViewSet):
     """
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
-    parser_classes = [MultiPartParser, FileUploadParser]
+    parser_classes = (MultiPartParser, FileUploadParser)
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'username',
-                openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                description='Имя пользователя',
-                required=True
-            ),
-            openapi.Parameter(
-                'email',
-                openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                description='Email пользователя',
-                required=True
-            ),
-            openapi.Parameter(
-                'password',
-                openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                description='Пароль пользователя',
-                required=True
-            ),
-        ],
-        responses={
-            201: openapi.Response(
-                description='Пользователь успешно создан',
-                examples={
-                    "application/json": {
-                        "user": {
-                            "username": "john_doe",
-                            "email": "user@example.com"
-                        },
-                        "refresh": "your-refresh-token",
-                        "access": "your-access-token"
-                    }
-                }
-            ),
-            400: 'Неверные данные'
-        }
-    )
+    @swagger_auto_schema(**register_swagger_schema)
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-
         refresh = RefreshToken.for_user(user)
+
+        send_welcome_email(
+            user=user, refresh_token=refresh, access_token=refresh.access_token
+        )
+
         response_data = {
             'user': {
                 'username': user.username,
                 'email': user.email
             },
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
+            'refresh': f'Bearer {refresh}',
+            'access': f'Bearer {refresh.access_token}',
         }
 
         return Response(response_data, status=status.HTTP_201_CREATED)
@@ -87,69 +56,17 @@ class RegisterViewSet(CreateModelMixin, viewsets.GenericViewSet):
 class CollectViewSet(viewsets.ModelViewSet):
     queryset = Collect.objects.all()
     serializer_class = CollectSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FileUploadParser]
+    permission_classes = (permissions.IsAuthenticated,)
+    parser_classes = (MultiPartParser, FileUploadParser)
 
     def perform_create(self, serializer):
         collect = serializer.save(author=self.request.user)
-        send_email.delay(
-            subject='Новый сбор создан',
-            message=f'Вы успешно создали сбор: {collect.title}',
-            recipient_list=[self.request.user.email]
+        send_collect_creation_email(
+            user=self.request.user,
+            collect_title=collect.title
         )
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'title',
-                openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                description='Название сбора',
-                required=True
-            ),
-            openapi.Parameter(
-                'occasion',
-                openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                description='Повод',
-                enum=['birthday', 'wedding', 'charity', 'other'],
-                required=True
-            ),
-            openapi.Parameter(
-                'description',
-                openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                description='Описание сбора',
-                required=True
-            ),
-            openapi.Parameter(
-                'target_amount',
-                openapi.IN_FORM,
-                type=openapi.TYPE_NUMBER,
-                description='Целевая сумма',
-                required=True
-            ),
-            openapi.Parameter(
-                'end_date',
-                openapi.IN_FORM,
-                type=openapi.TYPE_STRING,
-                format=openapi.FORMAT_DATETIME,
-                description='Дата завершения сбора \
-                             (формат: 2025-05-01T00:00:00)',
-                required=True
-            ),
-            openapi.Parameter(
-                'cover_image',
-                openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                description='Обложка сбора (изображение)',
-                required=False
-            ),
-        ],
-        responses={
-            201: 'Сбор успешно создан',
-        }
-    )
+    @swagger_auto_schema(**collect_create_swagger_schema)
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
@@ -160,32 +77,12 @@ class PaymentViewSet(viewsets.ModelViewSet):
     """
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser]
+    permission_classes = (permissions.IsAuthenticated,)
+    parser_classes = (MultiPartParser,)
 
-    http_method_names = ['get', 'post', 'delete']
+    http_method_names = ('get', 'post', 'delete')
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'collect',
-                openapi.IN_FORM,
-                type=openapi.TYPE_NUMBER,
-                description='id сбора',
-                required=True
-            ),
-            openapi.Parameter(
-                'amount',
-                openapi.IN_FORM,
-                type=openapi.TYPE_NUMBER,
-                description='Сумма пожертвования',
-                required=True
-            ),
-        ],
-        responses={
-            200: 'Пожертвование успешно добавлено'
-        }
-    )
+    @swagger_auto_schema(**payment_create_swagger_schema)
     def create(self, request, *args, **kwargs):
         collect = Collect.objects.get(id=request.data.get('collect'))
         amount = int(request.data.get('amount'))
@@ -197,11 +94,11 @@ class PaymentViewSet(viewsets.ModelViewSet):
         collect.collected_amount += payment.amount
         collect.donors_count += 1
         collect.save()
-        send_email.delay(
-            subject='Новое пожертвование',
-            message=f'Пользователь {request.user.username} '
-                    f'пожертвовал {amount} на ваш сбор.',
-            recipient_list=[collect.author.email]
+        send_donation_email(
+            donor_username=request.user.username,
+            amount=amount,
+            collect_title=collect.title,
+            author_email=collect.author.email
         )
         return Response({'message': 'Пожертвование успешно добавлено'})
 
