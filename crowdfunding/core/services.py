@@ -1,4 +1,39 @@
+from django.core.cache import cache
+
 from .tasks import send_email
+
+
+def get_cached_data(cache_key, query_fn, timeout=60 * 15):
+    """
+    Получает данные из кэша или базы данных.
+    Если данных нет в кэше, выполняет запрос к базе данных
+    и сохраняет результат в кэш.
+    """
+    cached_data = cache.get(cache_key)
+    if cached_data is None:
+        cached_data = query_fn()
+        cache.set(cache_key, cached_data, timeout=timeout)
+    return cached_data
+
+
+def generate_cache_key(key_prefix, user_id=None, obj_id=None):
+    """
+    Генерирует ключ для кэша на основе префикса,
+    ID пользователя и ID объекта.
+    """
+    if user_id and obj_id:
+        return f"{key_prefix}_{obj_id}_{user_id}"
+    elif user_id:
+        return f"{key_prefix}_{user_id}"
+    return key_prefix
+
+
+def clear_cache_keys(*cache_keys):
+    """
+    Очищает указанные ключи кэша.
+    """
+    for key in cache_keys:
+        cache.delete(key)
 
 
 def send_generic_email(subject, message, recipient_list):

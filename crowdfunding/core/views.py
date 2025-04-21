@@ -13,7 +13,12 @@ from .serializers import (
     CollectSerializer, PaymentSerializer, RegisterSerializer
 )
 from .services import (
-    send_welcome_email, send_collect_creation_email, send_donation_email
+    get_cached_data,
+    generate_cache_key,
+    clear_cache_keys,
+    send_welcome_email,
+    send_collect_creation_email,
+    send_donation_email
 )
 from .swagger_schemas import (
     register_swagger_schema,
@@ -54,17 +59,67 @@ class RegisterViewSet(CreateModelMixin, viewsets.GenericViewSet):
 
 
 class CollectViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet для управления сборами.
+    """
     queryset = Collect.objects.all()
     serializer_class = CollectSerializer
     permission_classes = (permissions.IsAuthenticated,)
     parser_classes = (MultiPartParser, FileUploadParser)
 
+    def list(self, request, *args, **kwargs):
+        cache_key = generate_cache_key('collect_list', self.request.user.id)
+        cached_data = get_cached_data(
+            cache_key,
+            query_fn=lambda: list(self.queryset.filter(
+                author=self.request.user)
+            ),
+        )
+        serializer = self.get_serializer(cached_data, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        cache_key = generate_cache_key(
+            'collect_detail', self.request.user.id, instance.id
+        )
+        cached_data = get_cached_data(
+            cache_key,
+            query_fn=lambda: self.get_serializer(instance).data,
+        )
+        return Response(cached_data)
+
     def perform_create(self, serializer):
         collect = serializer.save(author=self.request.user)
+        clear_cache_keys(
+            generate_cache_key('collect_list', self.request.user.id),
+        )
         send_collect_creation_email(
             user=self.request.user,
             collect_title=collect.title
         )
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        clear_cache_keys(
+            generate_cache_key(
+                'collect_detail', self.request.user.id, instance.id
+            ),
+            generate_cache_key(
+                'collect_list', self.request.user.id
+            ),
+        )
+
+    def perform_destroy(self, instance):
+        clear_cache_keys(
+            generate_cache_key(
+                'collect_detail', self.request.user.id, instance.id
+            ),
+            generate_cache_key(
+                'collect_list', self.request.user.id
+            ),
+        )
+        instance.delete()
 
     @swagger_auto_schema(**collect_create_swagger_schema)
     def create(self, request, *args, **kwargs):
@@ -79,7 +134,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = (permissions.IsAuthenticated,)
     parser_classes = (MultiPartParser,)
-
     http_method_names = ('get', 'post', 'delete')
 
     @swagger_auto_schema(**payment_create_swagger_schema)
@@ -94,6 +148,11 @@ class PaymentViewSet(viewsets.ModelViewSet):
         collect.collected_amount += payment.amount
         collect.donors_count += 1
         collect.save()
+
+        clear_cache_keys(
+            generate_cache_key('payment_list', self.request.user.id),
+        )
+
         send_donation_email(
             donor_username=request.user.username,
             amount=amount,
@@ -108,5 +167,58 @@ class PaymentViewSet(viewsets.ModelViewSet):
         collect.collected_amount -= instance.amount
         collect.donors_count -= 1
         collect.save()
+
+        clear_cache_keys(
+            generate_cache_key(
+                'payment_detail', self.request.user.id, instance.id
+            ),
+            generate_cache_key(
+                'payment_list', self.request.user.id
+            ),
+        )
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def list(self, request, *args, **kwargs):
+        cache_key = generate_cache_key('payment_list', self.request.user.id)
+        cached_data = get_cached_data(
+            cache_key,
+            query_fn=lambda: list(
+                self.queryset.filter(user=self.request.user)
+            ),
+        )
+        serializer = self.get_serializer(cached_data, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        cache_key = generate_cache_key(
+            'payment_detail', self.request.user.id, instance.id
+        )
+        cached_data = get_cached_data(
+            cache_key,
+            query_fn=lambda: self.get_serializer(instance).data,
+        )
+        return Response(cached_data)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        clear_cache_keys(
+            generate_cache_key(
+                'payment_detail', self.request.user.id, instance.id
+            ),
+            generate_cache_key(
+                'payment_list', self.request.user.id
+            ),
+        )
+
+    def perform_destroy(self, instance):
+        clear_cache_keys(
+            generate_cache_key(
+                'payment_detail', self.request.user.id, instance.id
+            ),
+            generate_cache_key(
+                'payment_list', self.request.user.id
+            ),
+        )
+        instance.delete()

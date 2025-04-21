@@ -58,6 +58,16 @@ SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT') == 'True'
 SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE') == 'True'
 CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE') == 'True'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+    }
+}
+
 ROOT_URLCONF = 'crowdfunding.urls'
 
 TEMPLATES = [
