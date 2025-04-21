@@ -48,10 +48,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "https://crowdfunding.meteopavel.space",
 ]
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+
+SECURE_PROXY_SSL_HEADER = os.getenv('SECURE_PROXY_SSL_HEADER') == (
+    'HTTP_X_FORWARDED_PROTO', 'https'
+)
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT') == 'True'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE') == 'True'
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE') == 'True'
 
 ROOT_URLCONF = 'crowdfunding.urls'
 
